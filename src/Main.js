@@ -12,10 +12,9 @@ async function getData() {
 
 export const Main = () => {
   const [data, setData] = useState([]);
-  const [key, setkey] = useState([]);
+  const [keys, setKeys] = useState("");
   const [viewPage, setViewPage] = useState(1);
-  const [viewPerPage, setViewPerPage] = useState(15);
-  const [selectValue, setSelectValue] = useState();
+  const [viewPerPage, setViewPerPage] = useState(12);
 
   useEffect(async () => {
     const apiArr = await getData();
@@ -28,87 +27,90 @@ export const Main = () => {
   const indexPage = data.slice(firstIndex, lastIndex);
   ///
 
-  function paginate(pageNumber) {
-    return setViewPage(pageNumber);
-  }
-
-  function nextPage() {
-    return setViewPage((prev) => prev + 1);
-  }
-
-  function prevPage() {
-    return setViewPage((prev) => (prev === 1 ? prev : prev - 1));
-  }
-
   function handleChange(event) {
     let userValue = event.target.value.toLowerCase().trim();
-    setkey(userValue);
-    // console.log(userValue);
+    setKeys(userValue);
   }
 
   let filtred = data.filter(
     (elem) =>
-      elem.keywords.toLowerCase().includes(key) ||
-      elem.title.toLowerCase().includes(key)
+      elem.keywords.toLowerCase().includes(keys) ||
+      elem.title.toLowerCase().includes(keys)
   );
 
   return (
     <div className="wrapper">
-      <>
-        <EmojiHeader onChange={handleChange} />
-        <input
-          className="input"
-          type="text"
-          value={data.keywords}
-          onChange={handleChange}
-        />
-      </>
+      <header className="header">
+        <EmojiHeader />
+        <div className="header__search">
+          <input
+            className="input"
+            type="text"
+            placeholder="Введите emoji"
+            value={keys}
+            onChange={handleChange}
+          />
+        </div>
+      </header>
       <div className="main">
         <div className="main__container">
-          {filtred.length === 0
-            ? "Loading"
-            : key.length === 0
-            ? indexPage.map((elem, index) => (
-                <Emoji
-                  key={index}
-                  symbol={elem.symbol}
-                  title={elem.title}
-                  keywords={elem.keywords
-                    .split(" ")
-                    .filter((elem, index, arr) => arr.indexOf(elem) === index)
-                    .join(" ")}
-                />
-              ))
-            : filtred.map((elem, index) => (
-                <Emoji
-                  key={index}
-                  symbol={elem.symbol}
-                  title={elem.title}
-                  keywords={elem.keywords
-                    .split(" ")
-                    .filter((elem, index, arr) => arr.indexOf(elem) === index)
-                    .join(" ")}
-                />
-              ))}
+          {filtred.length === 0 ? (
+            <img
+              src={require("../src/Wedges-3s-200px.gif")}
+              width="100%"
+              height="100%"
+              alt="loading..."
+            />
+          ) : keys.length === 0 ? (
+            indexPage.map((elem, index) => (
+              <Emoji
+                key={index}
+                symbol={elem.symbol}
+                title={elem.title}
+                keywords={elem.keywords
+                  .split(" ")
+                  .filter((elem, index, arr) => arr.indexOf(elem) === index)
+                  .join(" ")}
+              />
+            ))
+          ) : (
+            filtred.map((elem, index) => (
+              <Emoji
+                key={index}
+                symbol={elem.symbol}
+                title={elem.title}
+                keywords={elem.keywords
+                  .split(" ")
+                  .filter((elem, index, arr) => arr.indexOf(elem) === index)
+                  .join(" ")}
+              />
+            ))
+          )}
         </div>
       </div>
-      <div className="footer">
-        <button onClick={prevPage}>Prev Page</button>
-        <Pagination
-          viewPerPage={viewPerPage}
-          totalCards={filtred.length}
-          paginate={paginate}
-          viewPage={viewPage}
-        />
-        <button onClick={nextPage}>Next Page</button>
-        <select
-          value={selectValue}
-          onChange={(event) => setSelectValue(event.target.value)}
-        >
-          <option value="12">12</option>
-          <option value="24">24</option>
-        </select>
-      </div>
+      <footer className="footer">
+        <div className="footer__container">
+          <Pagination
+            viewPerPage={viewPerPage}
+            totalCards={filtred.length}
+            setViewPage={setViewPage}
+            viewPage={viewPage}
+          />
+          <div className="pagination__select">
+            <label htmlFor="select">Per page</label>
+            <select
+              className="pagination__select__page"
+              id="select"
+              value={viewPerPage}
+              onChange={(event) => setViewPerPage(event.target.value)}
+            >
+              <option value="12">12</option>
+              <option value="24">24</option>
+              <option value="48">48</option>
+            </select>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
