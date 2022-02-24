@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Emoji } from "./Emoji";
-import { Pagination } from "./pagination";
+// import { Pagination } from "./pagination";
+import { Paginator } from "./Paginator";
 import { EmojiHeader } from "./header";
 import "../src/style.css";
 
@@ -20,6 +21,10 @@ export const Main = () => {
     const apiArr = await getData();
     setData(apiArr);
   }, []);
+
+  useEffect(() => {
+    setViewPage(1);
+  }, [keys, viewPerPage]);
 
   ///
   const lastIndex = viewPage * viewPerPage;
@@ -90,11 +95,16 @@ export const Main = () => {
       </div>
       <footer className="footer">
         <div className="footer__container">
-          <Pagination
+          {/* <Pagination
             viewPerPage={viewPerPage}
             totalCards={filtred.length}
             setViewPage={setViewPage}
             viewPage={viewPage}
+          /> */}
+          <Paginator
+            page={viewPage}
+            totalPage={Math.ceil(filtred.length / viewPerPage)}
+            onPageChange={setViewPage}
           />
           <div className="pagination__select">
             <label htmlFor="select">Per page</label>
