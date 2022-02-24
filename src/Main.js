@@ -26,22 +26,22 @@ export const Main = () => {
     setViewPage(1);
   }, [keys, viewPerPage]);
 
-  ///
-  const lastIndex = viewPage * viewPerPage;
-  const firstIndex = lastIndex - viewPerPage;
-  const indexPage = data.slice(firstIndex, lastIndex);
-  ///
-
   function handleChange(event) {
     let userValue = event.target.value.toLowerCase().trim();
     setKeys(userValue);
   }
 
-  let filtred = data.filter(
+  const filtred = data.filter(
     (elem) =>
       elem.keywords.toLowerCase().includes(keys) ||
       elem.title.toLowerCase().includes(keys)
   );
+
+  ///
+  const lastIndex = viewPage * viewPerPage;
+  const firstIndex = lastIndex - viewPerPage;
+  const indexPage = filtred.slice(firstIndex, lastIndex);
+  ///
 
   return (
     <div className="wrapper">
@@ -66,20 +66,8 @@ export const Main = () => {
               height="100%"
               alt="loading..."
             />
-          ) : keys.length === 0 ? (
-            indexPage.map((elem, index) => (
-              <Emoji
-                key={index}
-                symbol={elem.symbol}
-                title={elem.title}
-                keywords={elem.keywords
-                  .split(" ")
-                  .filter((elem, index, arr) => arr.indexOf(elem) === index)
-                  .join(" ")}
-              />
-            ))
           ) : (
-            filtred.map((elem, index) => (
+            indexPage.map((elem, index) => (
               <Emoji
                 key={index}
                 symbol={elem.symbol}
