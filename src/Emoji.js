@@ -1,4 +1,3 @@
-import React from "react";
 import "../src/style.css";
 
 export const Emoji = ({ symbol, title, keywords }) => {

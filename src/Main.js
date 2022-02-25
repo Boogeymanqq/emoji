@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Emoji } from "./Emoji";
-// import { Pagination } from "./pagination";
 import { Paginator } from "./Paginator";
 import { EmojiHeader } from "./header";
 import "../src/style.css";
@@ -27,14 +26,20 @@ export const Main = () => {
   }, [keys, viewPerPage]);
 
   function handleChange(event) {
-    let userValue = event.target.value.toLowerCase().trim();
+    // const space = " ";
+    let userValue = event.target.value.split(",");
+    // console.log(userValue);
     setKeys(userValue);
   }
 
   const filtred = data.filter(
     (elem) =>
       elem.keywords.toLowerCase().includes(keys) ||
-      elem.title.toLowerCase().includes(keys)
+      elem.title.toLowerCase().includes(keys) ||
+      elem.keywords.toLowerCase().includes(keys[0]) +
+        elem.keywords.toLowerCase().includes(keys[1]) ||
+      elem.title.toLowerCase().includes(keys[0]) +
+        elem.title.toLowerCase().includes(keys[1])
   );
 
   ///
@@ -61,9 +66,10 @@ export const Main = () => {
         <div className="main__container">
           {filtred.length === 0 ? (
             <img
-              src={require("../src/Wedges-3s-200px.gif")}
-              width="100%"
-              height="100%"
+              style={{ alignSelf: "center", justifySelf: "center" }}
+              src={require("../src/loading.gif")}
+              width="200"
+              height="200"
               alt="loading..."
             />
           ) : (
@@ -83,29 +89,24 @@ export const Main = () => {
       </div>
       <footer className="footer">
         <div className="footer__container">
-          {/* <Pagination
-            viewPerPage={viewPerPage}
-            totalCards={filtred.length}
-            setViewPage={setViewPage}
-            viewPage={viewPage}
-          /> */}
           <Paginator
             page={viewPage}
             totalPage={Math.ceil(filtred.length / viewPerPage)}
             onPageChange={setViewPage}
           />
           <div className="pagination__select">
-            <label htmlFor="select">Per page</label>
-            <select
-              className="pagination__select__page"
-              id="select"
-              value={viewPerPage}
-              onChange={(event) => setViewPerPage(event.target.value)}
-            >
-              <option value="12">12</option>
-              <option value="24">24</option>
-              <option value="48">48</option>
-            </select>
+            <label>
+              Per page
+              <select
+                className="pagination__select__page"
+                value={viewPerPage}
+                onChange={(event) => setViewPerPage(event.target.value)}
+              >
+                <option value="12">12</option>
+                <option value="24">24</option>
+                <option value="48">48</option>
+              </select>
+            </label>
           </div>
         </div>
       </footer>
